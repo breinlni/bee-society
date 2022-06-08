@@ -1,4 +1,5 @@
 from utils import build_response_with_event, build_error_response
+from log_writer import write_new_log, close_temp_log
 
 
 def handle_yes_no(payload, yes=True):
@@ -27,6 +28,8 @@ def handle_yes_no(payload, yes=True):
         event_name = 'ende'
     else:
         error_message = f'Error in function handle_yes_no: payload = {str(payload)}'
+        write_new_log()
+        close_temp_log()
         return build_error_response(error_message=error_message)
 
     response = build_response_with_event(event_name=event_name)
