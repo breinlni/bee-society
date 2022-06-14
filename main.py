@@ -1,9 +1,14 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, render_template
 from handler import handle_yes_no
 from utils import build_standard_response, build_response_with_context
 from log_writer import write_new_log, write_temp_log, close_temp_log
 
 app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 @app.route('/', methods=['POST'])
