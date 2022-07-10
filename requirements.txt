@@ -1,2 +1,4 @@
-Flask
+Flask==2.1.2
 gunicorn
+Flask-SQLAlchemy
+playsound==1.2.2
