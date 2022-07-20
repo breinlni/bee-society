@@ -44,5 +44,11 @@
         })(document, window.kommunicate || {});
     /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
     </script>
+    <script>
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        if (!MediaRecorder.isTypeSupported('audio/webm')) return alert('Browser not supported')
+        const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+    })
+    </script>
   </body>
 </html>
