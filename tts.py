@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-
 import playsound
 from google.cloud import texttospeech
 

@@ -70,7 +70,7 @@ def webhook():
     user_response = (payload['queryResult']['queryText'])
     bot_response = (payload['queryResult']['fulfillmentText'])
 
-    play_text(tts_client, bot_response)
+    # play_text(tts_client, bot_response)
 
     # Write Logs of the conversation for debugging
     write_temp_log(f'User: {user_response}')
@@ -87,34 +87,43 @@ def handle_intent(payload):
     intent = payload['queryResult']['intent']['displayName']
     user_response = (payload['queryResult']['queryText'])
 
+    response = ''
+
     if intent == 'Ende':
         write_new_log()
         close_temp_log()
 
     if intent == 'Volkskontrolle':
-        json_response_object = build_standard_response(message='Die Volkskontrolle wird gestartet. Hast du offene '
-                                                               'Brut gesehen? ')
+        response = 'Die Volkskontrolle wird gestartet. Hast du offene Brut gesehen?'
+        json_response_object = build_standard_response(message=response)
     elif intent == 'Neues Todo erfassen':
-        json_response_object = build_standard_response(message='Alles klar, bitte nennen mir jetzt die neue Aufgabe.')
+        response = 'Alles klar, bitte nennen mir jetzt die neue Aufgabe.'
+        json_response_object = build_standard_response(message=response)
     elif intent == 'Letztes Todo abfragen':
         todo = db.session.query(Todos).order_by(Todos.id.desc()).first()
-        json_response_object = build_standard_response(message='Hier deine letzte abgespeicherte Aufgabe: ' + todo.todo)
+        response = 'Hier deine letzte abgespeicherte Aufgabe: ' + todo.todo
+        json_response_object = build_standard_response(message=response)
     elif context == 'todo':
         todo = Todos(todo=user_response)
         db.session.add(todo)
         db.session.commit()
-        json_response_object = build_standard_response(message='Die neue Aufgabe wurde abgespeichert.')
+        response = 'Die neue Aufgabe wurde abgespeichert.'
+        json_response_object = build_standard_response(message=response)
     elif intent == 'Ja':
         json_response_object = handle_yes_no(payload, yes=True)
+        response = payload['queryResult']['fulfillmentText']
     elif intent == 'Nein':
         json_response_object = handle_yes_no(payload, yes=False)
+        response = payload['queryResult']['fulfillmentText']
     elif intent == 'Default Fallback Intent':
-        json_response_object = \
-            build_response_with_context(message='Das habe ich leider nicht verstanden',
-                                        context=payload['queryResult']['outputContexts'][0]['name'])
+        response = 'Das habe ich leider nicht verstanden'
+        json_response_object = build_response_with_context(message=response,
+                                                           context=payload['queryResult']['outputContexts'][0]['name'])
     else:
         json_response_object = build_standard_response(message=payload['queryResult']['fulfillmentText'])
+        response = payload['queryResult']['fulfillmentText']
 
+    play_text(tts_client, response)
     return json_response_object
 
 
